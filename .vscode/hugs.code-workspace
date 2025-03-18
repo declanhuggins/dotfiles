@@ -1,10 +1,12 @@
 {
 	"folders": [
 		{
-			"path": ".."
+			"name": "hugs",
+			"path": "../.."
 		},
 		{
-			"path": "../.."
+			"name": ".dotfiles",
+			"path": ".."
 		}
 	],
 	"settings": {
