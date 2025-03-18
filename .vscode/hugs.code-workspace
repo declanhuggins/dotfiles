@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../.."
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"git.autoRepositoryDetection": false,
+		"launch": {
+			"configurations": [],
+			"compounds": []
+		}
+	}
+}
