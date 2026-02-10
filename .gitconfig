@@ -1,3 +1,7 @@
 [user]
 	name = Declan
 	email = 199662174+declanhuggins@users.noreply.github.com
+[init]
+	defaultBranch = main
+[core]
+	excludesfile = /Users/hugs/.gitignore
