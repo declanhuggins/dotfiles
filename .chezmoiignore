@@ -1,0 +1,7 @@
+README.md
+LICENSE
+.setup/**
+
+{{ if ne .chezmoi.os "darwin" }}
+Scripts/**
+{{ end }}

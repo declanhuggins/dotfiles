@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "==> Installing system packages via Ansible..."
+
+# Install Ansible if not present
+if ! command -v ansible-playbook &>/dev/null; then
+{{- if eq .chezmoi.os "darwin" }}
+  brew install ansible
+{{- else if eq .chezmoi.osRelease.id "arch" }}
+  sudo pacman -S --noconfirm ansible
+{{- else }}
+  sudo apt update && sudo apt install -y ansible
+{{- end }}
+fi
+
+# Run the Ansible playbook
+ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass
+
+echo "==> System packages installed successfully."

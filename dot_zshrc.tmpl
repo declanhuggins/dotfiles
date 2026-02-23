@@ -9,13 +9,25 @@ zstyle ':omz:update' mode auto
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
+alias ff="fastfetch"
+
+{{ if eq .chezmoi.os "darwin" -}}
+# macOS-specific aliases
 alias awake='sudo pmset -a disablesleep 1'
 alias rest='sudo pmset -a disablesleep 0'
+alias cnvrt="~/Scripts/convert.sh"
+alias ndssh="~/Scripts/ssh-automate.sh nd.dhugs.com"
+alias update="brew update && brew upgrade --greedy && ncu -g && softwareupdate -ia"
+{{ else -}}
+# Linux-specific aliases
+{{ if eq .chezmoi.osRelease.id "arch" -}}
+alias update="sudo pacman -Syu"
+{{ else -}}
+alias update="sudo apt update && sudo apt upgrade -y"
+{{ end -}}
+{{ end -}}
+
 alias deepseek-tiny="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:1.5b"
 alias deepseek="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:8b"
 alias deepseek-large="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:14b"
 alias chatgpt="ollama serve > /dev/null 2>&1 & ollama run gpt-oss:latest"
-alias cnvrt="~/Scripts/convert.sh"
-alias ff="fastfetch"
-alias ndssh="~/Scripts/ssh-automate.sh nd.dhugs.com"
-alias update="brew update && brew upgrade --greedy && softwareupdate -ia"

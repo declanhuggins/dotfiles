@@ -1,0 +1,10 @@
+unset mouse
+set nowrap
+set linenumbers
+set autoindent
+set nonewlines
+{{ if eq .chezmoi.os "darwin" -}}
+include "/opt/homebrew/share/nano/*.nanorc"
+{{ else -}}
+include "/usr/share/nano/*.nanorc"
+{{ end -}}

@@ -1,0 +1,4 @@
+[[ssh-keys]]
+vault = "Website"
+[[ssh-keys]]
+vault = "SSH"

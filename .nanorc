@@ -1,6 +1,0 @@
-unset mouse
-set nowrap
-set linenumbers
-set autoindent
-set nonewlines
-include "/opt/homebrew/Cellar/nano/*/share/nano/*.nanorc"
