@@ -1,10 +1,27 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "==> Installing system packages via Ansible..."
+# --- Install zsh if not present ---
+if ! command -v zsh &>/dev/null; then
+  echo "==> Installing zsh..."
+{{- if eq .chezmoi.os "darwin" }}
+  brew install zsh
+{{- else if eq .chezmoi.osRelease.id "arch" }}
+  sudo pacman -S --noconfirm zsh
+{{- else }}
+  sudo apt update && sudo apt install -y zsh
+{{- end }}
+fi
 
-# Install Ansible if not present
+# --- Set zsh as default shell ---
+if [ "$SHELL" != "$(which zsh)" ]; then
+  echo "==> Setting zsh as default shell..."
+  chsh -s "$(which zsh)"
+fi
+
+# --- Install Ansible if not present ---
 if ! command -v ansible-playbook &>/dev/null; then
+  echo "==> Installing Ansible..."
 {{- if eq .chezmoi.os "darwin" }}
   brew install ansible
 {{- else if eq .chezmoi.osRelease.id "arch" }}
@@ -14,7 +31,8 @@ if ! command -v ansible-playbook &>/dev/null; then
 {{- end }}
 fi
 
-# Run the Ansible playbook
+# --- Run the Ansible playbook ---
+echo "==> Running Ansible playbook..."
 ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass
 
-echo "==> System packages installed successfully."
+echo "==> Setup complete."
