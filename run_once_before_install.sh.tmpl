@@ -1,6 +1,41 @@
 #!/bin/bash
 set -euo pipefail
 
+{{ if .noSudo -}}
+echo "==> No sudo access. Running lightweight setup..."
+
+# --- Ensure ~/.local/bin exists ---
+mkdir -p "$HOME/.local/bin"
+
+# --- Set zsh as default shell (without sudo) ---
+if [ "$SHELL" != "$(which zsh)" ]; then
+  echo "==> Attempting to set zsh as default shell..."
+  if chsh -s "$(which zsh)" 2>/dev/null; then
+    echo "    zsh set as default shell."
+  else
+    echo "    Could not change default shell (no permission)."
+    echo "    Your .bashrc will auto-launch zsh as a fallback."
+  fi
+fi
+
+# --- Install fastfetch if not present ---
+if ! command -v fastfetch &>/dev/null; then
+  echo "==> Installing fastfetch to ~/.local/bin..."
+  FF_VERSION=$(curl -fsSL "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" | grep '"tag_name"' | head -1 | cut -d'"' -f4)
+  FF_URL="https://github.com/fastfetch-cli/fastfetch/releases/download/${FF_VERSION}/fastfetch-linux-amd64.tar.gz"
+  if curl -fsSL "$FF_URL" -o /tmp/fastfetch.tar.gz; then
+    tar -xzf /tmp/fastfetch.tar.gz -C /tmp
+    cp /tmp/fastfetch-linux-amd64/usr/bin/fastfetch "$HOME/.local/bin/fastfetch"
+    chmod +x "$HOME/.local/bin/fastfetch"
+    rm -rf /tmp/fastfetch.tar.gz /tmp/fastfetch-linux-amd64
+    echo "    fastfetch installed to ~/.local/bin/fastfetch"
+  else
+    echo "    Could not download fastfetch (skipping)."
+  fi
+fi
+
+echo "==> Lightweight setup complete. Restart your shell or run: exec zsh"
+{{ else -}}
 {{ if eq .chezmoi.os "darwin" -}}
 # --- Install Homebrew if not present ---
 if ! command -v brew &>/dev/null; then
@@ -54,3 +89,4 @@ echo "==> Running Ansible playbook..."
 ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass
 
 echo "==> Setup complete. Restart your shell or run: exec zsh"
+{{ end -}}
