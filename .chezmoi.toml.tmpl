@@ -1,5 +1,5 @@
 {{- $noSudo := promptBoolOnce . "noSudo" "Is this a machine without sudo access" -}}
-{{- $ndStudent := promptBoolOnce . "studentMachine" "Is this a Notre Dame student machine" -}}
+{{- $studentMachine := promptBoolOnce . "studentMachine" "Is this a Notre Dame student machine" -}}
 
 [data]
   email = "199662174+declanhuggins@users.noreply.github.com"
