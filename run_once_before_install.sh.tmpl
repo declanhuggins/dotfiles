@@ -1,6 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 
+# --- Cache sudo credentials once upfront ---
+echo "==> Requesting sudo access (one-time prompt)..."
+sudo -v
+# Keep sudo alive in the background for the duration of the script
+while true; do sudo -n true; sleep 30; done 2>/dev/null &
+SUDO_PID=$!
+trap 'kill $SUDO_PID 2>/dev/null' EXIT
+
+{{ if eq .chezmoi.os "darwin" -}}
+# --- Install Homebrew if not present ---
+if ! command -v brew &>/dev/null; then
+  echo "==> Installing Homebrew..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+{{ end -}}
+
 # --- Install zsh if not present ---
 if ! command -v zsh &>/dev/null; then
   echo "==> Installing zsh..."
@@ -16,7 +33,7 @@ fi
 # --- Set zsh as default shell ---
 if [ "$SHELL" != "$(which zsh)" ]; then
   echo "==> Setting zsh as default shell..."
-  chsh -s "$(which zsh)"
+  sudo chsh -s "$(which zsh)" "$USER"
 fi
 
 # --- Install Ansible if not present ---
@@ -33,6 +50,6 @@ fi
 
 # --- Run the Ansible playbook ---
 echo "==> Running Ansible playbook..."
-ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass
+ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml"
 
-echo "==> Setup complete."
+echo "==> Setup complete. Restart your shell or run: exec zsh"
