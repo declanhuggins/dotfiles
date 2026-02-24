@@ -11,12 +11,12 @@ mkdir -p "$HOME/.local/bin"
 if ! command -v fastfetch &>/dev/null; then
   echo "==> Installing fastfetch to ~/.local/bin..."
   FF_VERSION=$(curl -fsSL "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" | grep '"tag_name"' | head -1 | cut -d'"' -f4)
-  FF_URL="https://github.com/fastfetch-cli/fastfetch/releases/download/${FF_VERSION}/fastfetch-linux-amd64.tar.gz"
+  FF_URL="https://github.com/fastfetch-cli/fastfetch/releases/download/${FF_VERSION}/fastfetch-linux-amd64-polyfilled.tar.gz"
   if curl -fsSL "$FF_URL" -o /tmp/fastfetch.tar.gz; then
     tar -xzf /tmp/fastfetch.tar.gz -C /tmp
-    cp /tmp/fastfetch-linux-amd64/usr/bin/fastfetch "$HOME/.local/bin/fastfetch"
+    cp /tmp/fastfetch-linux-amd64-polyfilled/usr/bin/fastfetch "$HOME/.local/bin/fastfetch"
     chmod +x "$HOME/.local/bin/fastfetch"
-    rm -rf /tmp/fastfetch.tar.gz /tmp/fastfetch-linux-amd64
+    rm -rf /tmp/fastfetch.tar.gz /tmp/fastfetch-linux-amd64-polyfilled
     echo "    fastfetch installed to ~/.local/bin/fastfetch"
   else
     echo "    Could not download fastfetch (skipping)."
