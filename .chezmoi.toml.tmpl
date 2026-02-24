@@ -1,8 +1,10 @@
 {{- $hasSudo := promptBoolOnce . "hasSudo" "Do you have sudo access on this machine" -}}
 {{- $studentMachine := promptBoolOnce . "studentMachine" "Is this a Notre Dame student machine" -}}
+{{- $use1Password := promptBoolOnce . "use1Password" "Will you use 1Password on this machine" -}}
 
 [data]
   email = "199662174+declanhuggins@users.noreply.github.com"
   name = "Declan"
   hasSudo = {{ $hasSudo }}
   studentMachine = {{ $studentMachine }}
+  use1Password = {{ $use1Password }}
