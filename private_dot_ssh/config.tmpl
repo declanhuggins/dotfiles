@@ -1,5 +1,7 @@
+{{ if .use1Password -}}
 Include ~/.ssh/1Password/config
 
+{{ end -}}
 Host mc.afrotc.org
 	HostName mc.afrotc.org
 	User ubuntu
@@ -15,10 +17,11 @@ Host nd.dhugs.com
 Host desktop
 	HostName desktop
 	User hugs
-
+{{ if .use1Password }}
 Host *
 {{- if eq .chezmoi.os "darwin" }}
 	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 {{- else }}
 	IdentityAgent "~/.1password/agent.sock"
 {{- end }}
+{{ end -}}

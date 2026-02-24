@@ -20,6 +20,7 @@ During `chezmoi init`, you'll be prompted:
 
 - **"Do you have sudo access on this machine"** — `n` runs a lightweight setup (installs fastfetch to `~/.local/bin`, skips Ansible)
 - **"Is this a Notre Dame student machine"** — `y` adds `/escnfs/home/pbui/pub/pkgsrc/bin` to PATH
+- **"Will you use 1Password on this machine"** — `n` skips 1Password SSH agent config and agent.toml
 
 To change these answers later, edit `~/.config/chezmoi/chezmoi.toml`.
 
@@ -56,8 +57,8 @@ chezmoi apply
 | `.nanorc` | Nano editor config with OS-aware syntax paths |
 | `.gitconfig` | Git user config |
 | `.gitignore` | Global gitignore |
-| `.ssh/config` | SSH hosts with 1Password agent (OS-aware socket path) |
-| `.config/1Password/ssh/agent.toml` | 1Password SSH agent vault config |
+| `.ssh/config` | SSH hosts, 1Password agent (if enabled) |
+| `.config/1Password/ssh/agent.toml` | 1Password SSH agent vault config (if enabled) |
 | `scripts/` | Utility scripts (per-OS, see `.chezmoiignore`) |
 
 ## Adding New Files
