@@ -26,7 +26,7 @@ If `chezmoi` isn't in your `$PATH` after install:
 ~/bin/chezmoi init --apply declanhuggins/dotfiles
 ```
 
-### No sudo access
+### No sudo access (e.g. Notre Dame student machines)
 
 Install chezmoi to a user-writable directory:
 
@@ -34,16 +34,21 @@ Install chezmoi to a user-writable directory:
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin init --apply declanhuggins/dotfiles
 ```
 
-Note: package installation (zsh, git, nano, etc.) will be skipped without sudo. Ask your admin to install them.
+During `chezmoi init`, you'll be prompted:
+
+- **"Is this a machine without sudo access"** — answer `y` to skip package installation and Ansible, and instead run a lightweight setup (attempts `chsh` without sudo, installs fastfetch to `~/.local/bin`)
+- **"Is this a Notre Dame student machine"** — answer `y` to add `/escnfs/home/pbui/pub/pkgsrc/bin` to your PATH
+
+To change these answers later, edit `~/.config/chezmoi/chezmoi.toml`.
 
 ### What happens on first run
 
 1. Installs chezmoi
 2. Clones this repo
-3. Runs bootstrap script (`run_once_before_install.sh`):
-   - macOS: installs Homebrew, enables Touch ID for sudo
-   - All: installs zsh, sets it as default shell, installs Ansible
-4. Runs Ansible playbook (installs git, nano, curl, wget, fastfetch)
+3. Prompts for machine configuration (sudo access, student machine)
+4. Runs bootstrap script (`run_once_before_install.sh`):
+   - **With sudo:** installs Homebrew (macOS), enables Touch ID (macOS), installs zsh, sets default shell, runs Ansible playbook (git, nano, curl, wget, fastfetch)
+   - **Without sudo:** attempts `chsh` without sudo (falls back to `.bashrc` auto-launching zsh), installs fastfetch to `~/.local/bin`
 5. Pulls Oh My Zsh
 6. Applies all config files with OS-appropriate settings
 
