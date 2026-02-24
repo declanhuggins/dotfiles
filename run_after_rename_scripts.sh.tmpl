@@ -1,0 +1,7 @@
+#!/bin/bash
+{{ if eq .chezmoi.os "darwin" -}}
+# Rename to uppercase Scripts on macOS (two-step for case-insensitive FS)
+if [ -d "$HOME/scripts" ]; then
+  mv "$HOME/scripts" "$HOME/.scripts_tmp" && mv "$HOME/.scripts_tmp" "$HOME/Scripts"
+fi
+{{ end -}}
