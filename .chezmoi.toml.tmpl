@@ -1,8 +1,8 @@
-{{- $noSudo := promptBoolOnce . "noSudo" "Is this a machine without sudo access" -}}
+{{- $hasSudo := promptBoolOnce . "hasSudo" "Do you have sudo access on this machine" -}}
 {{- $studentMachine := promptBoolOnce . "studentMachine" "Is this a Notre Dame student machine" -}}
 
 [data]
   email = "199662174+declanhuggins@users.noreply.github.com"
   name = "Declan"
-  noSudo = {{ $noSudo }}
+  hasSudo = {{ $hasSudo }}
   studentMachine = {{ $studentMachine }}

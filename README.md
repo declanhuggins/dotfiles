@@ -36,7 +36,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin init --apply declanh
 
 During `chezmoi init`, you'll be prompted:
 
-- **"Is this a machine without sudo access"** — answer `y` to skip package installation and Ansible, and instead run a lightweight setup (attempts `chsh` without sudo, installs fastfetch to `~/.local/bin`)
+- **"Do you have sudo access on this machine"** — answer `n` to skip package installation and Ansible, and instead run a lightweight setup (attempts `chsh` without sudo, installs fastfetch to `~/.local/bin`)
 - **"Is this a Notre Dame student machine"** — answer `y` to add `/escnfs/home/pbui/pub/pkgsrc/bin` to your PATH
 
 To change these answers later, edit `~/.config/chezmoi/chezmoi.toml`.
