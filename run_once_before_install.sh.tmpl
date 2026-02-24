@@ -7,17 +7,6 @@ echo "==> No sudo access. Running lightweight setup..."
 # --- Ensure ~/.local/bin exists ---
 mkdir -p "$HOME/.local/bin"
 
-# --- Set zsh as default shell (without sudo) ---
-if [ "$SHELL" != "$(which zsh)" ]; then
-  echo "==> Attempting to set zsh as default shell..."
-  if chsh -s "$(which zsh)" 2>/dev/null; then
-    echo "    zsh set as default shell."
-  else
-    echo "    Could not change default shell (no permission)."
-    echo "    Your .bashrc will auto-launch zsh as a fallback."
-  fi
-fi
-
 # --- Install fastfetch if not present ---
 if ! command -v fastfetch &>/dev/null; then
   echo "==> Installing fastfetch to ~/.local/bin..."
