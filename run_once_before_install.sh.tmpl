@@ -1,16 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# --- Prompt for password once, reuse everywhere ---
-read -rsp "==> Enter your sudo password (one-time prompt): " SUDO_PASS
-echo
-echo "$SUDO_PASS" | sudo -S -v 2>/dev/null
-# Keep sudo alive in the background for the duration of the script
-while true; do echo "$SUDO_PASS" | sudo -S -n true 2>/dev/null; sleep 30; done &
-SUDO_PID=$!
-trap 'kill $SUDO_PID 2>/dev/null' EXIT
-export ANSIBLE_BECOME_PASSWORD="$SUDO_PASS"
-
 {{ if eq .chezmoi.os "darwin" -}}
 # --- Install Homebrew if not present ---
 if ! command -v brew &>/dev/null; then
@@ -52,6 +42,6 @@ fi
 
 # --- Run the Ansible playbook ---
 echo "==> Running Ansible playbook..."
-ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml"
+ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass
 
 echo "==> Setup complete. Restart your shell or run: exec zsh"
