@@ -1,5 +1,8 @@
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/bin:$PATH"
+{{ if stat "/escnfs/home/pbui/pub/pkgsrc/bin" -}}
+export PATH=/escnfs/home/pbui/pub/pkgsrc/bin:$PATH
+{{ end -}}
 
 if [ -f ~/.env ]; then
     export $(grep -v '^#' ~/.env | xargs)

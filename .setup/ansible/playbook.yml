@@ -50,10 +50,3 @@
         name: "{{ common_packages + ['fastfetch'] }}"
         state: present
       when: ansible_facts['os_family'] == "Darwin"
-
-    # --- Set default shell to zsh ---
-    - name: Set default shell to zsh
-      ansible.builtin.user:
-        name: "{{ ansible_facts['user_id'] }}"
-        shell: "{{ '/bin/zsh' if ansible_facts['os_family'] == 'Darwin' else '/usr/bin/zsh' }}"
-      become: true

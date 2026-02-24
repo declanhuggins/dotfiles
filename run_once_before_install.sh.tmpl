@@ -10,6 +10,15 @@ if ! command -v brew &>/dev/null; then
 fi
 {{ end -}}
 
+{{ if eq .chezmoi.os "darwin" -}}
+# --- Enable Touch ID for sudo ---
+PAM_SUDO="/etc/pam.d/sudo_local"
+if [ ! -f "$PAM_SUDO" ] || ! grep -q pam_tid "$PAM_SUDO"; then
+  echo "==> Enabling Touch ID for sudo..."
+  sudo sh -c 'echo "auth       sufficient     pam_tid.so" > /etc/pam.d/sudo_local'
+fi
+{{ end -}}
+
 # --- Install zsh if not present ---
 if ! command -v zsh &>/dev/null; then
   echo "==> Installing zsh..."
