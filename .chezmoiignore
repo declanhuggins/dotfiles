@@ -2,6 +2,27 @@ README.md
 LICENSE
 .setup/**
 
+# --- macOS-only scripts (ignored on Linux) ---
 {{ if ne .chezmoi.os "darwin" }}
-Scripts/**
+scripts/convert.sh
+scripts/avifier.sh
+scripts/jpegier.sh
+scripts/convert-epubs.sh
+scripts/hostname.sh
+scripts/whisperx-run.sh
+scripts/scraper.sh
+scripts/ssh-automate.sh
+scripts/AddMetadata.py
+scripts/CitationFormater.py
+scripts/WebsiteCompare.py
+{{ end }}
+
+--- Arch-only scripts (ignored elsewhere) ---
+{{ if or (ne .chezmoi.os "linux") (ne (index .chezmoi.osRelease "id") "arch") }}
+
+{{ end }}
+
+--- Ubuntu-only scripts (ignored elsewhere) ---
+{{ if or (ne .chezmoi.os "linux") (ne (index .chezmoi.osRelease "id") "ubuntu") }}
+
 {{ end }}
