@@ -1,0 +1,13 @@
+# If zsh is available, switch to it
+if [ -x "$(command -v zsh)" ]; then
+  exec zsh -l
+fi
+
+# Fallback bash config if zsh isn't installed yet
+export PATH="$HOME/bin:$PATH"
+
+if [ -f ~/.env ]; then
+    export $(grep -v '^#' ~/.env | xargs)
+fi
+
+alias ff="fastfetch"

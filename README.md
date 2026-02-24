@@ -12,6 +12,13 @@ On a new machine, run:
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply declanhuggins/dotfiles
 ```
 
+If chezmoi isn't in your `$PATH` after install (common on Linux where it defaults to `~/bin`):
+
+```bash
+export PATH="$HOME/bin:$PATH"
+~/bin/chezmoi init --apply declanhuggins/dotfiles
+```
+
 This will:
 1. Install chezmoi
 2. Clone this repo
