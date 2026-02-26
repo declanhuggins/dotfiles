@@ -13,6 +13,7 @@ zstyle ':omz:update' mode auto
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
+export EDITOR="nano"
 alias ff="fastfetch"
 
 {{ if eq .chezmoi.os "darwin" -}}
