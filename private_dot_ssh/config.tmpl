@@ -17,8 +17,13 @@ Host nd.dhugs.com
 Host desktop
 	HostName desktop
 	User hugs
+
+Host nas
+	Hostname nas
+	User hugs
 {{ if .use1Password }}
 Host *
+	WarnWeakCrypto no
 {{- if eq .chezmoi.os "darwin" }}
 	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 {{- else }}
