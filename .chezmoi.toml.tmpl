@@ -1,6 +1,10 @@
 {{- $hasSudo := promptBoolOnce . "hasSudo" "Do you have sudo access on this machine" -}}
 {{- $studentMachine := promptBoolOnce . "studentMachine" "Is this a Notre Dame student machine" -}}
 {{- $use1Password := promptBoolOnce . "use1Password" "Will you use 1Password on this machine" -}}
+{{- $useKDE := false -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{-   $useKDE = promptBoolOnce . "useKDE" "Install KDE Plasma desktop with SDDM" -}}
+{{- end -}}
 
 [data]
   email = "199662174+declanhuggins@users.noreply.github.com"
@@ -8,3 +12,4 @@
   hasSudo = {{ $hasSudo }}
   studentMachine = {{ $studentMachine }}
   use1Password = {{ $use1Password }}
+  useKDE = {{ $useKDE }}
