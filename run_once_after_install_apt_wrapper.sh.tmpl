@@ -1,0 +1,10 @@
+#!/bin/bash
+{{ if and .hasSudo (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch") -}}
+set -euo pipefail
+
+# Install apt-to-pacman wrapper to /usr/local/bin so it works with sudo
+echo "==> Installing apt wrapper to /usr/local/bin/apt..."
+sudo cp "$HOME/scripts/apt" /usr/local/bin/apt
+sudo chmod 755 /usr/local/bin/apt
+echo "    Done. You can now use 'sudo apt install', 'sudo apt update', etc."
+{{ end -}}

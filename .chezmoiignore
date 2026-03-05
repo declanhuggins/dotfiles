@@ -24,7 +24,7 @@ scripts/WebsiteCompare.py
 
 --- Arch-only scripts (ignored elsewhere) ---
 {{ if or (ne .chezmoi.os "linux") (ne (index .chezmoi.osRelease "id") "arch") }}
-
+scripts/apt
 {{ end }}
 
 --- Ubuntu-only scripts (ignored elsewhere) ---
