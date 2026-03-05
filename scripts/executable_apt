@@ -1,0 +1,96 @@
+#!/bin/bash
+# apt-to-pacman wrapper for Arch Linux
+# Translates common apt commands to their pacman equivalents.
+
+set -euo pipefail
+
+if [ $# -eq 0 ]; then
+    echo "Usage: apt <command> [options] [packages...]"
+    echo ""
+    echo "Commands: install, remove, purge, update, upgrade, full-upgrade,"
+    echo "          search, show, list, autoremove, clean, autoclean"
+    exit 1
+fi
+
+COMMAND="$1"
+shift
+
+# Collect flags and packages separately
+NOCONFIRM=""
+PACKAGES=()
+EXTRA_ARGS=()
+for arg in "$@"; do
+    case "$arg" in
+        -y|--yes|--assume-yes)
+            NOCONFIRM="--noconfirm"
+            ;;
+        --installed)
+            EXTRA_ARGS+=("$arg")
+            ;;
+        --upgradable)
+            EXTRA_ARGS+=("$arg")
+            ;;
+        -*)
+            EXTRA_ARGS+=("$arg")
+            ;;
+        *)
+            PACKAGES+=("$arg")
+            ;;
+    esac
+done
+
+case "$COMMAND" in
+    install)
+        exec pacman -S $NOCONFIRM "${PACKAGES[@]}"
+        ;;
+    reinstall)
+        exec pacman -S $NOCONFIRM "${PACKAGES[@]}"
+        ;;
+    remove)
+        exec pacman -R $NOCONFIRM "${PACKAGES[@]}"
+        ;;
+    purge)
+        exec pacman -Rns $NOCONFIRM "${PACKAGES[@]}"
+        ;;
+    update)
+        exec pacman -Sy $NOCONFIRM
+        ;;
+    upgrade)
+        exec pacman -Syu $NOCONFIRM
+        ;;
+    full-upgrade|dist-upgrade)
+        exec pacman -Syu $NOCONFIRM
+        ;;
+    search)
+        exec pacman -Ss "${PACKAGES[@]}"
+        ;;
+    show)
+        exec pacman -Si "${PACKAGES[@]}"
+        ;;
+    list)
+        if [[ " ${EXTRA_ARGS[*]:-} " == *" --installed "* ]]; then
+            exec pacman -Q
+        elif [[ " ${EXTRA_ARGS[*]:-} " == *" --upgradable "* ]]; then
+            exec pacman -Qu
+        else
+            exec pacman -Sl
+        fi
+        ;;
+    autoremove)
+        ORPHANS=$(pacman -Qdtq 2>/dev/null || true)
+        if [ -z "$ORPHANS" ]; then
+            echo "No orphaned packages to remove."
+            exit 0
+        fi
+        echo "$ORPHANS" | pacman -Rns $NOCONFIRM -
+        ;;
+    clean|autoclean)
+        exec pacman -Sc $NOCONFIRM
+        ;;
+    *)
+        echo "apt: unknown command '$COMMAND'"
+        echo "Try: install, remove, purge, update, upgrade, full-upgrade,"
+        echo "     search, show, list, autoremove, clean"
+        exit 1
+        ;;
+esac
