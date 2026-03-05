@@ -36,3 +36,9 @@ alias deepseek-tiny="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:1.5b
 alias deepseek="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:8b"
 alias deepseek-large="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:14b"
 alias chatgpt="ollama serve > /dev/null 2>&1 & ollama run gpt-oss:latest"
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=($HOME/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
