@@ -6,6 +6,10 @@ fi
 # Fallback bash config if zsh isn't installed yet
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+
 if [ -f ~/.env ]; then
     export $(grep -v '^#' ~/.env | xargs)
 fi
