@@ -13,16 +13,6 @@
       - bash-completion
 
   tasks:
-    # --- Load chezmoi config ---
-    - name: Read chezmoi config
-      ansible.builtin.command: chezmoi data --format=json
-      register: chezmoi_data_raw
-      changed_when: false
-
-    - name: Parse chezmoi config
-      ansible.builtin.set_fact:
-        chezmoi_data: "{{ chezmoi_data_raw.stdout | from_json }}"
-
     # --- Debian / Ubuntu ---
     - name: Install packages (Debian/Ubuntu)
       ansible.builtin.apt:
@@ -69,7 +59,7 @@
         state: present
       become: true
       when:
-        - chezmoi_data.useKDE | default(false) | bool
+        - use_kde | default(false) | bool
         - ansible_facts['os_family'] == "Archlinux"
 
     - name: Install sddm-kcm (Debian/Ubuntu)
@@ -78,5 +68,5 @@
         state: present
       become: true
       when:
-        - chezmoi_data.useKDE | default(false) | bool
+        - use_kde | default(false) | bool
         - ansible_facts['os_family'] == "Debian"

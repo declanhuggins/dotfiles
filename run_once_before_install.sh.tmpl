@@ -75,7 +75,12 @@ fi
 
 # --- Run the Ansible playbook ---
 echo "==> Running Ansible playbook..."
-ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass
+CHEZMOI_VARS=$(mktemp)
+cat > "$CHEZMOI_VARS" <<EOF
+use_kde: {{ if hasKey . "useKDE" }}{{ .useKDE }}{{ else }}false{{ end }}
+EOF
+ansible-playbook "{{ .chezmoi.sourceDir }}/.setup/ansible/playbook.yml" --ask-become-pass -e "@$CHEZMOI_VARS"
+rm -f "$CHEZMOI_VARS"
 
 echo "==> Setup complete. Restart your shell or run: exec zsh"
 {{ end -}}
