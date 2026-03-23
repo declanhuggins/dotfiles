@@ -7,12 +7,6 @@ Supports **macOS**, **Ubuntu**, and **Arch Linux**.
 ## New Machine Setup
 
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply declanhuggins/dotfiles
-```
-
-On machines without sudo (e.g. Notre Dame student machines), install to a user-writable directory:
-
-```bash
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin init --apply declanhuggins/dotfiles
 ```
 
