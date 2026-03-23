@@ -32,6 +32,8 @@ alias update="sudo apt update && sudo apt upgrade -y"
 {{ end -}}
 {{ end -}}
 
+alias dotfiles='code "$(chezmoi source-path)" && exit'
+
 alias deepseek-tiny="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:1.5b"
 alias deepseek="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:8b"
 alias deepseek-large="ollama serve > /dev/null 2>&1 & ollama run deepseek-r1:14b"
