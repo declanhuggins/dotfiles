@@ -22,7 +22,7 @@ To change these answers later, edit `~/.config/chezmoi/chezmoi.toml`.
 
 1. Clones this repo and prompts for machine configuration
 2. Runs bootstrap script:
-   - **With sudo:** installs Homebrew (macOS), enables Touch ID (macOS), installs zsh, sets default shell, runs Ansible playbook (git, nano, curl, wget, fastfetch)
+   - **With sudo:** installs Homebrew (macOS), enables Touch ID (macOS), installs zsh, sets default shell, runs Ansible playbook (git, nano, curl, wget, cmatrix, fastfetch)
    - **Without sudo:** installs fastfetch to `~/.local/bin` (`.bashrc` auto-launches zsh)
 3. Pulls Oh My Zsh
 4. Applies all config files with OS-appropriate settings
