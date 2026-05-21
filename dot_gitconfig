@@ -1,7 +1,14 @@
 [user]
 	name = Declan
 	email = 199662174+declanhuggins@users.noreply.github.com
+	signingkey = 9C1BC2B4882AF66ECF68BA3332681951ADD26706
 [init]
 	defaultBranch = main
 [core]
 	excludesfile = ~/.gitignore
+[gpg]
+	format = openpgp
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true

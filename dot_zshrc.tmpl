@@ -23,7 +23,7 @@ alias awake='sudo pmset -a disablesleep 1'
 alias rest='sudo pmset -a disablesleep 0'
 alias cnvrt="~/Scripts/convert.sh"
 alias ndssh="~/Scripts/ssh-automate.sh nd.dhugs.com"
-alias update="brew update && brew upgrade --greedy && ncu -g && softwareupdate -ia"
+alias update="brew update && brew upgrade && ncu -g && softwareupdate -ia"
 {{ else -}}
 # Linux-specific aliases
 {{ if eq .chezmoi.osRelease.id "arch" -}}
