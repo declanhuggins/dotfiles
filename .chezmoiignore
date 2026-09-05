@@ -9,6 +9,7 @@ LICENSE
 
 # --- macOS-only scripts (ignored on Linux) ---
 {{ if ne .chezmoi.os "darwin" }}
+Library
 scripts/convert.sh
 scripts/avifier.sh
 scripts/jpegier.sh
@@ -30,4 +31,10 @@ scripts/apt
 --- Ubuntu-only scripts (ignored elsewhere) ---
 {{ if or (ne .chezmoi.os "linux") (ne (index .chezmoi.osRelease "id") "ubuntu") }}
 
+{{ end }}
+
+# --- NAS mounter (macOS only, opt-in) ---
+{{ if or (ne .chezmoi.os "darwin") (not (and (hasKey . "setupNasAutomount") .setupNasAutomount)) }}
+.local/bin/mount-nas-shares
+Library/LaunchAgents/com.declanhuggins.nas-mount.plist
 {{ end }}

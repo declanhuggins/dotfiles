@@ -13,8 +13,9 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin init --apply declanh
 During `chezmoi init`, you'll be prompted:
 
 - **"Do you have sudo access on this machine"** — `n` runs a lightweight setup (installs fastfetch to `~/.local/bin`, skips Ansible)
-- **"Is this a Notre Dame student machine"** — `y` adds `/escnfs/home/pbui/pub/pkgsrc/bin` to PATH
+- **"Is this a Notre Dame student machine"** — `y` adds `/escnfs/home/pbui/pub/pkgsrc/bin` to PATH except on `db8` / `db8.cse.nd.edu`
 - **"Will you use 1Password on this machine"** — `n` skips 1Password SSH agent config and agent.toml
+- **"Configure UGREEN NAS SMB automounts"** — `y` adds a macOS user LaunchAgent for `Photography`, `Games`, and `Media`
 
 To change these answers later, edit `~/.config/chezmoi/chezmoi.toml`.
 
@@ -33,11 +34,45 @@ To change these answers later, edit `~/.config/chezmoi/chezmoi.toml`.
 chezmoi update
 ```
 
+To save edits made directly to managed files on a machine, use `chezmoi re-add`.
+Templated files need their changes merged into the source template manually. Review
+`chezmoi diff` before committing and pushing the source repository.
+
 ## Re-running Bootstrap
 
 ```bash
 chezmoi state delete-bucket --bucket=scriptState
 chezmoi apply
+```
+
+## UGREEN NAS Automounts
+
+On macOS machines with Tailscale access, enable `setupNasAutomount` in
+`~/.config/chezmoi/chezmoi.toml` to configure a user-session LaunchAgent that
+keeps these SMB shares mounted:
+
+```text
+/Volumes/Photography
+/Volumes/Games
+/Volumes/Media
+```
+
+The defaults use `smb://nas` with the current macOS username. To change that,
+edit:
+
+```toml
+[data]
+  setupNasAutomount = true
+  nasSmbHost = "nas"
+  nasSmbUser = "hugs"
+```
+
+The mounter runs as your login user so it can use your normal macOS SMB
+Keychain entry. If cleanup from an older autofs setup is skipped because sudo
+is not cached, run:
+
+```bash
+sudo -v && chezmoi apply
 ```
 
 ## What's Managed
@@ -53,6 +88,10 @@ chezmoi apply
 | `.gitignore` | Global gitignore |
 | `.ssh/config` | SSH hosts, 1Password agent (if enabled) |
 | `.config/1Password/ssh/agent.toml` | 1Password SSH agent vault config (if enabled) |
+| `run_after_configure_nas_automount.sh.tmpl` | macOS cleanup and LaunchAgent loading for UGREEN NAS SMB shares |
+| `.local/bin/mount-nas-shares` | User-session SMB mounter used by the NAS LaunchAgent |
+| `Library/LaunchAgents/` | macOS schedules for Homebrew, global Node packages, macOS updates, and NAS mounts |
+| `Library/Application Support/com.declanhuggins.*/` | Automatic updater scripts |
 | `scripts/` | Utility scripts (per-OS, see `.chezmoiignore`) |
 
 ## Adding New Files

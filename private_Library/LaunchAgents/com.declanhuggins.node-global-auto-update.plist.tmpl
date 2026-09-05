@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.declanhuggins.node-global-auto-update</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>{{ .chezmoi.homeDir }}/Library/Application Support/com.declanhuggins.node-global-auto-update/node-global-auto-update.zsh</string>
+  </array>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>5</integer>
+    <key>Minute</key>
+    <integer>17</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>{{ .chezmoi.homeDir }}/Library/Logs/node-global-auto-update/launchd.out.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>{{ .chezmoi.homeDir }}/Library/Logs/node-global-auto-update/launchd.err.log</string>
+
+  <key>WorkingDirectory</key>
+  <string>{{ .chezmoi.homeDir }}</string>
+
+  <key>ProcessType</key>
+  <string>Background</string>
+
+  <key>LowPriorityIO</key>
+  <true/>
+
+  <key>Nice</key>
+  <integer>10</integer>
+</dict>
+</plist>

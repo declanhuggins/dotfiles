@@ -5,6 +5,10 @@
 {{- if eq .chezmoi.os "linux" -}}
 {{-   $useKDE = promptBoolOnce . "useKDE" "Install KDE Plasma desktop with SDDM" -}}
 {{- end -}}
+{{- $setupNasAutomount := false -}}
+{{- if and (eq .chezmoi.os "darwin") $hasSudo -}}
+{{-   $setupNasAutomount = promptBoolOnce . "setupNasAutomount" "Configure UGREEN NAS SMB automounts" -}}
+{{- end -}}
 
 [data]
   email = "199662174+declanhuggins@users.noreply.github.com"
@@ -13,3 +17,6 @@
   studentMachine = {{ $studentMachine }}
   use1Password = {{ $use1Password }}
   useKDE = {{ $useKDE }}
+  setupNasAutomount = {{ $setupNasAutomount }}
+  nasSmbHost = "nas"
+  nasSmbUser = "{{ .chezmoi.username }}"

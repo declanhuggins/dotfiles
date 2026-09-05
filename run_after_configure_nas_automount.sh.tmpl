@@ -1,0 +1,99 @@
+#!/bin/bash
+set -euo pipefail
+
+{{- $enabled := false -}}
+{{- if and (hasKey . "setupNasAutomount") .setupNasAutomount -}}
+{{-   $enabled = true -}}
+{{- end -}}
+{{- $nasHost := "nas" -}}
+{{- if hasKey . "nasSmbHost" -}}
+{{-   $nasHost = .nasSmbHost -}}
+{{- end -}}
+{{- $nasUser := .chezmoi.username -}}
+{{- if hasKey . "nasSmbUser" -}}
+{{-   $nasUser = .nasSmbUser -}}
+{{- end -}}
+
+{{ if and (eq .chezmoi.os "darwin") .hasSudo $enabled }}
+FSTAB_FILE="/etc/fstab"
+MASTER_FILE="/etc/auto_master"
+MAP_FILE="/etc/auto_nas"
+LAUNCH_AGENT="{{ .chezmoi.homeDir }}/Library/LaunchAgents/com.declanhuggins.nas-mount.plist"
+LAUNCH_LABEL="com.declanhuggins.nas-mount"
+START_MARKER="# chezmoi-ugreen-nas-start"
+END_MARKER="# chezmoi-ugreen-nas-end"
+
+fstab_tmp="$(mktemp)"
+master_tmp="$(mktemp)"
+trap 'rm -f "$fstab_tmp" "$master_tmp"' EXIT
+
+if [ -f "$FSTAB_FILE" ]; then
+  awk -v start="$START_MARKER" -v end="$END_MARKER" '
+    $0 == start { skip = 1; next }
+    $0 == end { skip = 0; next }
+    !skip { print }
+  ' "$FSTAB_FILE" | sed -e '${/^$/d;}' > "$fstab_tmp"
+else
+  : > "$fstab_tmp"
+fi
+
+awk -v map="$MAP_FILE" '
+  $1 == "/-" && $2 == map {
+    if (!restored_static) {
+      print "/-\t-static"
+      restored_static = 1
+    }
+    next
+  }
+  { print }
+' "$MASTER_FILE" > "$master_tmp"
+
+mountpoints_ready=true
+for mountpoint in /Volumes/Photography /Volumes/Games /Volumes/Media; do
+  if [ -d "$mountpoint" ] && ! mount | grep -q " on $mountpoint "; then
+    mountpoints_ready=false
+  fi
+done
+
+needs_sudo=false
+if [ -f "$MAP_FILE" ] && grep -q "Managed by chezmoi" "$MAP_FILE"; then
+  needs_sudo=true
+fi
+if ! cmp -s "$fstab_tmp" "$FSTAB_FILE" ||
+   ! cmp -s "$master_tmp" "$MASTER_FILE" ||
+   ! $mountpoints_ready; then
+  needs_sudo=true
+fi
+
+if $needs_sudo; then
+  if ! sudo -n true 2>/dev/null; then
+    echo "==> NAS mount setup needs sudo. Run: sudo -v && chezmoi apply"
+    exit 0
+  fi
+
+  sudo install -o root -g wheel -m 644 "$master_tmp" "$MASTER_FILE"
+  sudo install -o root -g wheel -m 644 "$fstab_tmp" "$FSTAB_FILE"
+  if [ -f "$MAP_FILE" ] && grep -q "Managed by chezmoi" "$MAP_FILE"; then
+    sudo rm -f "$MAP_FILE"
+  fi
+
+  sudo automount -vc || true
+  for mountpoint in /Volumes/Photography /Volumes/Games /Volumes/Media; do
+    if [ -d "$mountpoint" ] && ! mount | grep -q " on $mountpoint "; then
+      sudo rmdir "$mountpoint" 2>/dev/null || true
+    fi
+  done
+fi
+
+if [ -f "$LAUNCH_AGENT" ]; then
+  launchctl bootout "gui/$(id -u)" "$LAUNCH_AGENT" 2>/dev/null || true
+  launchctl bootstrap "gui/$(id -u)" "$LAUNCH_AGENT"
+  launchctl kickstart -k "gui/$(id -u)/$LAUNCH_LABEL" 2>/dev/null || true
+  echo "==> NAS user-session mounter configured for /Volumes/{Photography,Games,Media}"
+else
+  echo "==> NAS LaunchAgent not found at $LAUNCH_AGENT"
+fi
+
+{{ else -}}
+exit 0
+{{ end -}}

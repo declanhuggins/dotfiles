@@ -1,7 +1,11 @@
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 {{ if .studentMachine -}}
-export PATH=/escnfs/home/pbui/pub/pkgsrc/bin:$PATH
+# Use Bui Python only when not on db8.
+case "$(hostname)" in
+    db8|db8.cse.nd.edu) ;;
+    *) export PATH="/escnfs/home/pbui/pub/pkgsrc/bin:$PATH" ;;
+esac
 {{ end -}}
 
 if [ -f ~/.env ]; then
@@ -23,7 +27,26 @@ alias awake='sudo pmset -a disablesleep 1'
 alias rest='sudo pmset -a disablesleep 0'
 alias cnvrt="~/Scripts/convert.sh"
 alias ndssh="~/Scripts/ssh-automate.sh nd.dhugs.com"
-alias update="brew update && brew upgrade && ncu -g && softwareupdate -ia"
+update() {
+    local softwareupdate_script="$HOME/Library/Application Support/com.declanhuggins.softwareupdate-auto-install/softwareupdate-auto-install.zsh"
+    local brew_script="$HOME/Library/Application Support/com.declanhuggins.brew-auto-update/brew-auto-update.zsh"
+    local node_script="$HOME/Library/Application Support/com.declanhuggins.node-global-auto-update/node-global-auto-update.zsh"
+
+    echo "==> macOS software updates"
+    AUTOUPDATE_FOREGROUND=1 "$softwareupdate_script"
+    echo
+
+    echo "==> Homebrew updates"
+    AUTOUPDATE_FOREGROUND=1 "$brew_script"
+    echo
+
+    echo "==> Global npm package updates"
+    AUTOUPDATE_FOREGROUND=1 "$node_script"
+
+    echo
+    echo "Update run complete."
+    echo "Logs: ~/Library/Logs/{softwareupdate-auto-install,brew-auto-update,node-global-auto-update}/run.log"
+}
 {{ else -}}
 # Linux-specific aliases
 {{ if eq .chezmoi.osRelease.id "arch" -}}
@@ -45,3 +68,8 @@ fpath=($HOME/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+
+{{ if eq .chezmoi.os "darwin" -}}
+# Use IINA through the Simkl scrobbler when ani-cli starts a video.
+export ANI_CLI_PLAYER=simkl-iina
+{{ end -}}

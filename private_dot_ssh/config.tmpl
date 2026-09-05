@@ -13,11 +13,14 @@ Host mc.dhugs.com
 Host nd.dhugs.com
 	HostName nd.dhugs.com
 	User dhuggin2
+	ForwardAgent yes
 
 Host desktop
 	HostName desktop
 	User hugs
-
+{{ if .use1Password }}	IdentitiesOnly yes
+	IdentityFile ~/.ssh/1Password/SHA256_Y8wskWYq7wQhnUhcbbuoYUgk5qFhSAXMQkyiCfSAZOA.pub
+{{ end }}
 Host nas
 	Hostname nas
 	User hugs

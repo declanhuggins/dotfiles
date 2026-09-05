@@ -1,0 +1,42 @@
+#!/bin/bash
+set -euo pipefail
+
+{{ $nasHost := "nas" -}}
+{{ if hasKey . "nasSmbHost" -}}
+{{   $nasHost = .nasSmbHost -}}
+{{ end -}}
+{{ $nasUser := .chezmoi.username -}}
+{{ if hasKey . "nasSmbUser" -}}
+{{   $nasUser = .nasSmbUser -}}
+{{ end }}
+
+NAS_HOST="{{ $nasHost }}"
+NAS_USER="{{ $nasUser }}"
+SHARES=(Photography Games Media)
+
+if ! /usr/bin/nc -z -G 2 "$NAS_HOST" 445 >/dev/null 2>&1; then
+  exit 0
+fi
+
+is_mounted() {
+  local mountpoint="$1"
+  /sbin/mount | /usr/bin/grep -q " on $mountpoint "
+}
+
+mount_share() {
+  local share="$1"
+  local mountpoint="/Volumes/$share"
+
+  if is_mounted "$mountpoint"; then
+    if /bin/ls "$mountpoint" >/dev/null 2>&1; then
+      return 0
+    fi
+    /sbin/umount "$mountpoint" >/dev/null 2>&1 || /usr/sbin/diskutil unmount force "$mountpoint" >/dev/null 2>&1 || true
+  fi
+
+  /usr/bin/osascript -e "mount volume \"smb://$NAS_USER@$NAS_HOST/$share\"" >/dev/null
+}
+
+for share in "${SHARES[@]}"; do
+  mount_share "$share" || true
+done
